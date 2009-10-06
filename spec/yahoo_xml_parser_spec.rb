@@ -64,4 +64,45 @@ describe 'Yahoo XML Parser' do
       @parser.process!.should.be.true
     end
   end
+  
+  describe 'when transforming an XML document' do
+    before do
+      @parser = YahooXMLParser.new({})
+      @xml = 'sample XML document'
+      @parser.stub!(:xml).and_return(@xml)
+      @parser.stub!(:valid_xml?).with(@xml).and_return(true)
+    end
+    
+    it 'should work without arguments' do
+      lambda { @parser.transform_xml }.should.not.raise(ArgumentError)
+    end
+    
+    it 'should not allow arguments' do
+      lambda { @parser.transform_xml(:foo) }.should.raise(ArgumentError)
+    end
+    
+    it 'should fail if the XML document cannot be retrieved' do
+      @parser.stub!(:xml).and_raise(RuntimeError)
+      lambda { @parser.transform_xml }.should.raise(RuntimeError)
+    end
+    
+    it 'should fail if the XML document is not a valid Yahoo Store XML dump' do
+      @parser.stub!(:valid_xml?).with(@xml).and_return(false)
+      lambda { @parser.transform_xml }.should.raise(RuntimeError)
+    end
+    
+    # TODO: produce a CSV export
+  end
+  
+  describe 'when uploading transformed XML' do
+    
+  end
+  
+  describe 'XML document' do
+    
+  end
+  
+  describe 'when validating an XML document' do
+    
+  end
 end
