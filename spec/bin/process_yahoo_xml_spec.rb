@@ -61,4 +61,48 @@ describe 'process_yahoo_xml command' do
       run_command
     end
   end
+
+  describe "when -h is specified on the command-line" do
+    before do
+      Object.send(:remove_const, :ARGV)
+      ARGV = ['-h']
+    end
+    
+    it 'should display usage information' do
+      self.should.receive(:puts)
+      run_command
+    end
+    
+    it 'should not create a yahoo xml parser' do
+      YahooXMLParser.should.not.receive(:new)
+      run_command
+    end
+    
+    it 'should exit with status 0' do
+      self.should.receive(:exit).with(0)
+      run_command
+    end
+  end
+
+  describe "when --help is specified on the command-line" do
+    before do
+      Object.send(:remove_const, :ARGV)
+      ARGV = ['--help']
+    end
+    
+    it 'should display usage information' do
+      self.should.receive(:puts)
+      run_command
+    end
+    
+    it 'should not create a yahoo xml parser' do
+      YahooXMLParser.should.not.receive(:new)
+      run_command
+    end
+    
+    it 'should exit with status 0' do
+      self.should.receive(:exit).with(0)
+      run_command
+    end
+  end
 end
