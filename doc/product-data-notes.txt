@@ -1,0 +1,101 @@
+earth craft sites, product information distribution:
+
+Inventory
+ - <link> Product
+ - <link> Seller (Organization)
+ - <link> Facility
+ - quantity available
+ - quantity ordered
+
+Facility
+ - <link>  Owner (Organization)
+ - <link*> Inventory
+ - <link>  Address
+ - name
+ - description
+
+Site
+ - <link> Seller (Organization)
+ - name
+ - url
+
+Organization
+ - <link*> Makes (Product)
+ - <link*> Inventory
+ - <link*> Sites
+ - <link*> Facilities
+ - name
+ - short description
+ - description
+ - url
+ - logo image url
+ - <link*> Addresses
+ - <link*> Phones
+ - <link*> Emails
+
+Price:
+ - <link> Product
+ - Start Date
+ - End Date
+ - cost of manufacture
+ - retail price
+ - retail sale price
+
+Address
+ - *
+
+Phone
+ - *
+
+Email
+ - *
+
+Products  (core product model)
+ - <link>  Maker (Product)
+ - <link*> Inventory
+ - <link*> Prices
+ - <link*> related products
+ - <link*> reverse-related products
+ - product ID
+ - maker product code*     (* - should factor this out to a more general code mapping system)
+ - tilonia product code*
+ - name
+ - short description
+ - description
+ - base image url
+ - gift certificate?
+ - orderable?
+ - category path
+ - taxable?
+ - shipping required?
+ - shipping weight
+ - notes
+ - keywords
+ ? size
+ ? colors
+ ?? available date
+ ?? expiration date
+
+per-site product information:
+
+Yahoo Shops
+ - yahoo shopping category
+ - condition
+ ? special offer
+
+
+
+Q: should we be tracking per-site product URLs?  This was done in the past, but is there any need / advantage to doing this in this architecture?
+Q: what is "quantity required" from the "Database Inventory" sheet of the requirements specification?
+
+
+Strategy:
+
+ order of creation/import:  organization, sites, facility product, price, inventory
+
+ - take yahoo xml export (or google base export) to generate initial product list
+ - use the FoT stock list to begin populating Facilities (warehouses) and Inventory quantities for products
+ - get an extract or list from Tally (?) to begin populating more products, facilities, and inventory quantities
+ - is there additional information in the "Tilonia Wholesale Price List" spreadsheet?
+ - we can pull image links from the spreadsheet just called "tilonia.xls" as well as basic product_type
+
