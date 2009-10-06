@@ -16,5 +16,5 @@ OptionParser.new do |opts|
   end
 end.parse!
 
-YahooXMLParser.new(options) unless options[:help]
+YahooXMLParser.new(options).process! unless options[:help]
 exit(0)

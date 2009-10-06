@@ -8,6 +8,8 @@ end
 describe 'process_yahoo_xml command' do
   before do
     @parser = 'fake yahoo xml parser'
+    @parser.stub!(:process!)
+    YahooXMLParser.stub!(:new).and_return(@parser)
     self.stub!(:exit)
     self.stub!(:puts)
   end
@@ -90,6 +92,11 @@ describe 'process_yahoo_xml command' do
       run_command
     end
     
+    it 'should not attempt to process Yahoo Stores XML' do
+      @parser.should.not.receive(:process!)
+      run_command
+    end
+    
     it 'should exit with status 0' do
       self.should.receive(:exit).with(0)
       run_command
@@ -112,9 +119,19 @@ describe 'process_yahoo_xml command' do
       run_command
     end
     
+    it 'should not attempt to process Yahoo Stores XML' do
+      @parser.should.not.receive(:process!)
+      run_command
+    end
+    
     it 'should exit with status 0' do
       self.should.receive(:exit).with(0)
       run_command
     end
+  end
+
+  it 'should use the created xml parser to process the Yahoo Stores XML dump' do
+    @parser.should.receive(:process!)
+    run_command
   end
 end
