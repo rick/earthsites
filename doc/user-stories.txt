@@ -1,0 +1,97 @@
+user stories:
+
+
+
+As a Seller
+I want to be able to offer Products for wholesale sale without carrying Inventory
+So that we can make money from larger orders to Makers.
+
+As a Seller
+I want to be notified when an Order is placed
+So that we can fulfill the Order quickly and
+So that we can contact the Customer quickly.
+
+As a Seller
+I want to be able to issue a Purchase Order for wholesale orders
+So that they will be fulfilled quickly by a Maker.
+
+As a Maker
+I want a standard Purchase Order from the Seller when a wholesale order is made
+So that it's clear what will be made and what the payment terms are.
+
+As a Seller
+I want to be able to update the prices for a set of known products
+So that we can change prices to be competitive.
+
+As a Seller
+I want I want to be able to update general information for a product
+So that we can correct errors from the Maker.
+
+As a Seller
+I want to be able to add inventory Locations
+So that we can store products in places which are currently convenient.
+
+As a Seller
+I want to be able to update my Product Inventory
+So that we can accurately reflect to Customers what is truly in stock.
+
+As a Seller
+I want to be able to specify various prices in terms of other prices
+So that we can easily offer N% margins or discounts based on a known other price.
+
+As a Seller
+I want my Inventory to be kept separate from other Sellers Inventories
+So that there is no confusion about what is available for sale.
+
+As a Seller
+I want to know who was the Maker of a Product
+So that we can reorder more of that Product, and
+So that we can publish information about the Maker on our Sites.
+
+As a Seller
+I want to be able to run multiple Sites
+So that we can sell to different markets appropriately.
+
+As a Maker
+I want my product codes to be in use in the system
+So that when a Product is ordered there is no confusion about how to fulfill it.
+
+As a Facility Owner
+I want to be able to tell whose Inventory is at my Facility
+So that I know my liability, and
+So that I know what can be used to fulfill an Order, and 
+So that I can verify if that Inventory is still present.
+
+As a Seller
+I want to be able to determine where my Inventory is located
+So that I can figure out the best way to fulfill an Order.
+
+As a Seller
+I want to be able to upload a new Price Sheet for Products in the database
+So that I can streamline the process of updating prices.
+
+As a Seller
+I want to be able to upload a new Inventory list to the database
+So that I can easily keep Inventory in sync on our sites.
+
+As a Seller
+I want to be able to easily update our Sites with information in the database
+So that Sites are kept up to date without much work.
+
+As a Maker
+I want to be able to change my product codes easily
+So that we can keep our production streamlined without negatively impacting the Sites.
+
+As a Seller 
+I want the system to track ordered products in Inventory
+So that products aren't mistakenly sold when they are received and should be applied to an open Order.
+
+As a Seller
+I want to be able to update the ordered inventory counts once we've shipped Products
+So that our Inventory is as accurate as possible.
+
+
+
+
+
+
