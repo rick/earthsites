@@ -8,9 +8,6 @@ class YahooXMLParser
   end
   
   def process!
-    fetch!
-  end
-
-  def fetch!
+    upload!(transform_xml)
   end
 end

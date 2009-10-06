@@ -27,6 +27,9 @@ describe 'Yahoo XML Parser' do
   describe 'when processing Yahoo XML' do
     before do
       @parser = YahooXMLParser.new({})
+      @transformed = { :transformed => :xml }
+      @parser.stub!(:transform_xml).and_return(@transformed)
+      @parser.stub!(:upload!).and_return(true)
     end
     
     it 'should work without arguments' do
@@ -37,14 +40,28 @@ describe 'Yahoo XML Parser' do
       lambda { @parser.process!(:foo) }.should.raise(ArgumentError)      
     end
     
-    it 'should fetch a copy of the most recent Yahoo XML dump' do
-      @parser.should.receive(:fetch!)
+    it 'should transform the XML document' do
+      @parser.should.receive(:transform_xml).and_return(@transformed)
+      @parser.process!
+    end
+        
+    it 'should fail if transforming the XML document fails' do
+      @parser.stub!(:transform_xml).and_raise(RuntimeError)
+      lambda { @parser.process! }.should.raise(RuntimeError)
+    end
+
+    it 'should upload the transformed XML document' do
+      @parser.should.receive(:upload!).with(@transformed)
       @parser.process!
     end
     
-    it 'should fail if fetching the most recent Yahoo XML dump fails' do
-      @parser.should.receive(:fetch!).and_raise(RuntimeError)
+    it 'should fail if uploading the transformed XML document fails' do
+      @parser.stub!(:upload!).and_raise(RuntimeError)
       lambda { @parser.process! }.should.raise(RuntimeError)
+    end
+    
+    it 'should return the result of uploading the transformed XML document' do
+      @parser.process!.should.be.true
     end
   end
 end
