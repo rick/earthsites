@@ -12,10 +12,22 @@ describe 'process_yahoo_xml command' do
     self.stub!(:puts)
   end
 
-  it 'should run when no command-line arguments are specified' do
-    Object.send(:remove_const, :ARGV)
-    ARGV = []
-    lambda { run_command }.should.not.raise(Errno::ENOENT)
+  describe 'when no command-line arguments are specified' do
+    it 'should run successfully' do
+      Object.send(:remove_const, :ARGV)
+      ARGV = []
+      lambda { run_command }.should.not.raise(Errno::ENOENT)
+    end
+    
+    it 'should create a yahoo xml parser' do
+      YahooXMLParser.should.receive(:new).and_return(@parser)
+      run_command
+    end
+    
+    it "should pass an empty set of options" do
+      YahooXMLParser.should.receive(:new).with({}).and_return(@parser)      
+      run_command
+    end
   end
 
   describe "when -v is specified on the command-line" do
