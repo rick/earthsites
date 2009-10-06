@@ -10,7 +10,6 @@ describe 'process_yahoo_xml command' do
     @parser = 'fake yahoo xml parser'
     @parser.stub!(:process!)
     YahooXMLParser.stub!(:new).and_return(@parser)
-    self.stub!(:exit)
     self.stub!(:puts)
   end
 
@@ -47,11 +46,6 @@ describe 'process_yahoo_xml command' do
       YahooXMLParser.should.receive(:new).with(:verbose => true).and_return(@parser)      
       run_command
     end
-    
-    it 'should exit with status 0' do
-      self.should.receive(:exit).with(0)
-      run_command
-    end
   end
 
   describe "when --verbose is specified on the command-line" do
@@ -67,11 +61,6 @@ describe 'process_yahoo_xml command' do
     
     it "should set the option to be verbose" do
       YahooXMLParser.should.receive(:new).with(:verbose => true).and_return(@parser)      
-      run_command
-    end
-    
-    it 'should exit with status 0' do
-      self.should.receive(:exit).with(0)
       run_command
     end
   end
@@ -96,11 +85,6 @@ describe 'process_yahoo_xml command' do
       @parser.should.not.receive(:process!)
       run_command
     end
-    
-    it 'should exit with status 0' do
-      self.should.receive(:exit).with(0)
-      run_command
-    end
   end
 
   describe "when --help is specified on the command-line" do
@@ -121,11 +105,6 @@ describe 'process_yahoo_xml command' do
     
     it 'should not attempt to process Yahoo Stores XML' do
       @parser.should.not.receive(:process!)
-      run_command
-    end
-    
-    it 'should exit with status 0' do
-      self.should.receive(:exit).with(0)
       run_command
     end
   end
