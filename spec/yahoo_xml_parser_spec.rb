@@ -23,4 +23,28 @@ describe 'Yahoo XML Parser' do
       YahooXMLParser.new({}).verbose?.should.be.false
     end
   end
+  
+  describe 'when processing Yahoo XML' do
+    before do
+      @parser = YahooXMLParser.new({})
+    end
+    
+    it 'should work without arguments' do
+      lambda { @parser.process! }.should.not.raise(ArgumentError)
+    end
+    
+    it 'should not allow arguments' do
+      lambda { @parser.process!(:foo) }.should.raise(ArgumentError)      
+    end
+    
+    it 'should fetch a copy of the most recent Yahoo XML dump' do
+      @parser.should.receive(:fetch!)
+      @parser.process!
+    end
+    
+    it 'should fail if fetching the most recent Yahoo XML dump fails' do
+      @parser.should.receive(:fetch!).and_raise(RuntimeError)
+      lambda { @parser.process! }.should.raise(RuntimeError)
+    end
+  end
 end

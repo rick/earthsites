@@ -6,4 +6,11 @@ class YahooXMLParser
   def verbose?
     !!@verbose
   end
+  
+  def process!
+    fetch!
+  end
+
+  def fetch!
+  end
 end
