@@ -157,10 +157,30 @@ describe 'Yahoo XML Parser' do
       @parser.valid_xml?(@parsed).should.be.false      
     end
     
-    it 'should have item fields for all items' do
+    it 'should require all items to have item fields' do
       item = @parsed.xpath('/Catalog/Item').last
       item.xpath('ItemField').each {|item_field| item_field.name = 'Foo' }
       @parser.valid_xml?(@parsed).should.be.false      
     end
+    
+    it 'should require all item fields to have table field ids ' do
+      item = @parsed.xpath('/Catalog/Item').last
+      item.xpath('ItemField').last.delete('TableFieldID')
+      @parser.valid_xml?(@parsed).should.be.false    
+    end
+
+    it 'should require all item fields to have values' do
+      item = @parsed.xpath('/Catalog/Item').last
+      item.xpath('ItemField').last.delete('Value')
+      @parser.valid_xml?(@parsed).should.be.false    
+    end
+
+    [ 'name', 'taxable', 'code', 'need-ship', 'condition' ].each do |field|
+      it "should require all items to have non-empty #{field} values" do
+        parsed = parse(@xml)
+        parsed.xpath("/Catalog/Item/ItemField[@TableFieldID='#{field}']").first['Value'] = ''
+        @parser.valid_xml?(parsed).should.be.false      
+      end
+    end    
   end
 end
