@@ -1,0 +1,8 @@
+class Autotest::Bacon < Autotest
+  def make_test_cmd(files_to_test)
+    args = files_to_test.keys.flatten.join(' ')
+    args = '-a' if args.empty?
+    # TODO : make regex to pass to -n using values
+    "#{ruby} -S bacon -I#{libs} -o SpecDox #{args}"
+  end
+end
