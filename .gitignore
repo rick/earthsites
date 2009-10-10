@@ -1,3 +1,4 @@
 etl.log
 source_data/
 db/*.sqlite*
+cache/*
