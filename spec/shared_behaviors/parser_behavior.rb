@@ -70,7 +70,7 @@ shared "a parser" do
       @output = 'Test Output'
       @result = 'Test Upload Result'
       @parser.stub!(:to_output).and_return(@output)
-      @parser.stub!(:upload!).with(@output).and_return(@result)
+      @parser.stub!(:write!).with(@output).and_return(@result)
     end
     
     it 'should work without arguments' do
@@ -91,23 +91,38 @@ shared "a parser" do
       lambda { @parser.process! }.should.raise(RuntimeError)
     end
     
-    it 'should upload the generated output' do
-      @parser.should.receive(:upload!).with(@output)
+    it 'should write the generated output' do
+      @parser.should.receive(:write!).with(@output)
       @parser.process!
     end
 
-    it 'should fail if uploading the generated output fails' do
-      @parser.stub!(:upload!).and_raise(RuntimeError)
+    it 'should fail if writing the generated output fails' do
+      @parser.stub!(:write!).and_raise(RuntimeError)
       lambda { @parser.process! }.should.raise(RuntimeError)      
     end
     
-    it 'should return the results of uploading the output' do
+    it 'should return the results of writing the output' do
       @parser.process!.should == @result
     end
   end
   
-  describe 'when uploading output' do
-    # TODO:
+  describe 'when writing output' do
+    before do
+      @data = 'Test Data'
+    end
+    
+    it 'should accept data' do
+      lambda { @parser.write!(@data) }.should.not.raise(ArgumentError)
+    end
+    
+    it 'should require data' do
+      lambda { @parser.write! }.should.raise(ArgumentError)
+    end
+    
+    # TODO / FIXME
+    it 'CURRENTLY returns the passed data' do
+      @parser.write!(@data).should == @data
+    end
   end
   
   describe 'when generating output' do
@@ -189,17 +204,17 @@ shared "a parser" do
       lambda { @parser.from_input }.should.raise(RuntimeError)
     end
     
-    it 'should upload the generated output' do
+    it 'should deserialize the generated output' do
       @parser.should.receive(:deserialize).with(@document)
       @parser.from_input
     end
 
-    it 'should fail if uploading the generated output fails' do
+    it 'should fail if deserializing the generated output fails' do
       @parser.stub!(:deserialize).and_raise(RuntimeError)
       lambda { @parser.from_input }.should.raise(RuntimeError)      
     end
     
-    it 'should return the results of uploading the output' do
+    it 'should return the results of deserializing the output' do
       @parser.from_input.should == @deserialized
     end
   end

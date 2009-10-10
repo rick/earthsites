@@ -21,12 +21,11 @@ class Parser
   end
   
   def process!
-    upload!(to_output)
+    write!(to_output)
   end
   
-  def upload!(data)
-    STDERR.puts "Would be uploading..."
-    puts data
+  def write!(data)
+    data
   end
   
   def to_output
