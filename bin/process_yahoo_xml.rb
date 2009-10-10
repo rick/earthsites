@@ -6,6 +6,10 @@ require 'yahoo_xml_parser'
 
 options = {}
 OptionParser.new do |opts|
+  opts.on('-u URL', '--url URL', 'specify URL from which to fetch data') do |u|
+    options[:url] = u
+  end
+  
   opts.on('-v', '--verbose', 'verbosely display progress and errors') do |v|
     options[:verbose] = true
   end
