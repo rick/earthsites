@@ -489,5 +489,34 @@ shared "a parser" do
       @parser.from_xml(@document).should == @parsed
     end
   end
+
+  describe 'when producing a list of destination attribute names' do
+    before do
+      @parser.stub!(:conversion_map).and_return([])
+    end
+    
+    it 'should work without arguments' do
+      lambda { @parser.destinations }.should.not.raise(ArgumentError)
+    end
+    
+    it 'should not allow arguments' do
+      lambda { @parser.destinations(:foo) }.should.raise(ArgumentError)
+    end
+    
+    it 'should fail if retrieving the conversion map fails' do
+      @parser.stub!(:conversion_map).and_raise(RuntimeError)
+      lambda { @parser.destinations }.should.raise(RuntimeError)
+    end
+
+    it 'should return an empty list when the conversion map is empty' do
+      @parser.stub!(:conversion_map).and_return([])
+      @parser.destinations.should == []
+    end
+    
+    it 'should return a list of the first elements of the conversion map' do
+      @parser.stub!(:conversion_map).and_return([ [ 'foo', 'bar' ], [ 'baz', 'xyzzy' ] ])
+      @parser.destinations.should == [ 'foo', 'baz' ]
+    end
+  end
 end
 
