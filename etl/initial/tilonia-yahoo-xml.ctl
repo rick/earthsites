@@ -20,13 +20,22 @@ source :in, {
   :skip_lines => 1,
 },
 [    
-  :name, 
-  :discount
+  :seller, :seller_code, :name, :short, :description, :maker, :maker_code, :images, :image_sizes, 
+  :price, :taxable, :download, :tilonia_code, :related, :orderable, :size, :color, 
+  :fabric, :condition, :keywords, :gift_certificate, :need_shipping, :wholesaleable, 
+  :featured_header, :yahoo_code, :yahoo_category, :yahoo_merchant_category, :yahoo_sale_price, 
+  :yahoo_multi_add, :yahoo_ypath, :yahoo_product_ads_category
 ]
 
+rename :maker_code, :product_id
+rename :seller_code, :product_code
+rename :price, :unit_price
+rename :maker, :vendor
+
 destination :out, {
-  :file => '../output/catalog.txt'
+  :file => '../output/catalog.txt',
+  :type => 'csv'
 },
 {
-  :order => [ :discount, :name ]
+  :order => [ :product_id, :product_code, :description, :unit_price, :vendor ]
 }
