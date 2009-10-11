@@ -1,14 +1,108 @@
 require 'parser'
 
-class YahooXMLParser < Parser
+class Object
+  def blank?
+    !self || nil? || (respond_to?(:empty?) ? empty? : false)
+  end
+end
 
+class Object  
+  def unless_blank?
+    blank? ? false : self
+  end
+end
+
+class YahooXMLParser < Parser
   # per-class method - mapping: ordered list of pairs -- first is destination name, last is conversion on source record
   # a simple string denotes a source key, proc denotes a method on source record
   def conversion_map
     @conversion_map ||= 
       [
-        [ 'name', 'name' ],
-        [ 'Discount', Proc.new {|source| "%0.2f" % (source['price'].to_f - source['sale-price'].to_f) } ]
+      # [ 'destination', 'source' ],
+        [ 'seller',    
+          Proc.new do |row| 
+            'Friends of Tilonia' 
+          end
+        ],
+        [ 'name',      'name'],
+        [ 'short', 
+          Proc.new do |row| 
+            row['abstract'].unless_blank? || row['product-ads-description'].unless_blank? || ''
+          end
+        ],
+        [ 'description', 
+          Proc.new do |row| 
+            row['top-featured-text'].unless_blank? || row['caption'].unless_blank? || ''
+          end
+        ],
+        [ 'maker',  
+          Proc.new do |row|
+            if row['code'] =~ /^AV-/ or row['name'] =~ /avani/i
+              'Avani'
+            else
+              'Tilonia'
+            end    
+          end
+        ],
+        [ 'maker_code',  
+          Proc.new do |row|
+            if row['code'] =~ /^AV-/ or row['name'] =~ /avani/i
+              row['code'].sub(/^AV-/, '').sub(/^([a-zA-Z]+)(\d+[aA]?)$/, '\1-\2') 
+            else
+              row['code']
+            end    
+          end
+        ],
+        [ 'images', 
+          Proc.new do |row|
+            images = ['image', 'image-top-left', 'inset', 'inset-1', 'inset-2' ].inject([]) do |list, img_field|
+              if row[img_field] =~ /src/
+                list << row[img_field].sub(/^.*src=(.*)[&>].*$/, '\1')
+              end
+              list
+            end
+            images.join('|')
+          end
+        ],
+        [ 'image_sizes', 
+          Proc.new do |row|
+            images = ['image', 'image-top-left', 'inset', 'inset-1', 'inset-2'].inject([]) do |list, img_field|
+              if row[img_field] =~ /src/
+                width = row[img_field].sub(/^.*width=(\d+).*$/, '\1')
+                height = row[img_field].sub(/^.*height=(\d+).*$/, '\1')
+                list << "#{width}x#{height}"
+              end
+              list
+            end
+            images.join('|')
+          end
+        ],
+        [ 'price', 'price'],
+        [ 'taxable', 'taxable'],
+        [ 'download',  'download'],
+        [ 'tilonia_code', 'code'],
+        [ 'related', 'cross-sell'],
+        [ 'orderable', 'orderable'],
+        [ 'size', 'size'],
+        [ 'color', 'color'],
+        [ 'fabric', 'fabric'],
+        [ 'condition', 'condition'],
+        [ 'keywords', 'keywords'],
+        [ 'gift_certificate', 'gift-certificate'],
+        [ 'need_shipping', 'need-ship'],
+        [ 'wholesaleable', 
+          Proc.new do |row|
+            row['wholesale-text'].blank? ? 'f' : 't'
+          end
+        ],
+        [ 'featured_header', 'top-featured-text-header'],
+        [ 'yahoo_code', 'ID'],
+        [ 'yahoo_category', 'yahoo-shopping-category'],
+        [ 'yahoo_merchant_category', 'merchant-category'],
+        [ 'yahoo_sale_price', 'sale-price'],
+        [ 'yahoo_multi_add', 'multi-add'],
+        [ 'yahoo_ypath', 'ypath'],
+        [ 'yahoo_product_ads_category', 'product-ads-category'],
       ]
   end
   
@@ -20,11 +114,9 @@ class YahooXMLParser < Parser
     STDERR.puts "Finished document validation." if verbose?
     result = parsed.xpath('/Catalog/Item').inject([]) do |a,item| 
       h = { 'id' => item['ID']}
-      a << h
-      item.xpath('ItemField').each do |f| 
-        h[f['TableFieldID']] = f['Value']
-      end
-      a 
+      item.xpath('ItemField').each { |f| h[f['TableFieldID']] = f['Value'] }
+      a << h unless h['product-ads-exclude'] == 't'
+      a
     end
     result
   end
