@@ -566,5 +566,32 @@ shared "a parser" do
       @parser.mapping.should == { 1 => 2, 3 => 4, 4 => 5}
     end
   end
+  
+  describe 'when translating a record hash to a destination array' do
+    it 'should accept a record' do
+      @parser.stub!(:destinations).and_return([])
+      lambda { @parser.record_to_array({}) }.should.not.raise(ArgumentError)
+    end
+    
+    it 'should require a record' do
+      @parser.stub!(:destinations).and_return([])
+      lambda { @parser.record_to_array }.should.raise(ArgumentError)
+    end
+    
+    it 'should fail if retrieving destination attribute names fails' do
+      @parser.stub!(:destinations).and_raise(RuntimeError)
+      lambda { @parser.record_to_array({}) }.should.raise(RuntimeError)
+    end
+    
+    it 'should return an empty list if there are no destination attributes' do
+      @parser.stub!(:destinations).and_return([])
+      @parser.record_to_array({}).should == []
+    end
+    
+    it 'should return a destinations-ordered list of matching record field values' do
+      @parser.stub!(:destinations).and_return([ 'foo', 'bar', 'baz' ])
+      @parser.record_to_array({ 'baz' => '1', 'bar' => '2', 'foo' => 'test'}).should == ['test', '2', '1']
+    end
+  end
 end
 
