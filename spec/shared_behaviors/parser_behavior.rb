@@ -639,5 +639,32 @@ shared "a parser" do
       @parser.convert_row(row).should == { 'foo' => 'xyzzy', 'bar' => 'frobnitz', 'baz' => 3}
     end
   end
+  
+  describe 'when converting a list of rows' do
+    it 'should accept a list of rows' do
+      lambda { @parser.convert([]) }.should.not.raise(ArgumentError)
+    end
+    
+    it 'should require a list of rows' do
+      lambda { @parser.convert }.should.raise(ArgumentError)
+    end
+    
+    it 'should return an empty list when the provided row list is empty' do
+      @parser.convert([]).should == []
+    end
+    
+    it 'should fail if converting a row fails' do
+      @parser.stub!(:convert_row).and_raise(RuntimeError)
+      lambda { @parser.convert([{}]) }.should.raise(RuntimeError)
+    end
+    
+    it 'should return a list with the result of converting each row in order' do
+      row1 = { 'foo' => 'bar' }
+      row2 = { 'baz' => 'xyzzy' }
+      @parser.stub!(:convert_row).with(row1).and_return(['x', 'y'])
+      @parser.stub!(:convert_row).with(row2).and_return(['1', '2'])
+      @parser.convert([row1, row2]).should == [['x', 'y'], ['1', '2']]
+    end
+  end
 end
 
