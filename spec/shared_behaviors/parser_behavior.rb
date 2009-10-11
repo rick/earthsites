@@ -536,6 +536,35 @@ shared "a parser" do
       rule = Proc.new {|row| row.keys.size }
       @parser.change(rule, { 'a' => 'b', 'c' => 'd', 'e' => 'f'}).should == 3
     end
+    
+    it 'should fail if calling a callable rule fails' do
+      rule = Proc.new {|row| raise "Flunk!" }
+      lambda { @parser.change(rule, { 'a' => 'b', 'c' => 'd', 'e' => 'f'}) }.should.raise(RuntimeError)
+    end
+  end
+  
+  describe 'when converting the conversion map pairing into a hash' do
+    before do
+      @parser.stub!(:conversion_map).and_return([])
+    end
+    
+    it 'should work without arguments' do
+      lambda { @parser.mapping }.should.not.raise(ArgumentError)
+    end
+    
+    it 'should not allow arguments' do
+      lambda { @parser.mapping(:foo) }.should.raise(ArgumentError)
+    end
+    
+    it 'should fail if looking up the conversion map fails' do
+      @parser.stub!(:conversion_map).and_raise(RuntimeError)
+      lambda { @parser.mapping }.should.raise(RuntimeError)
+    end    
+    
+    it 'should map each paired conversion map entry to a hash key-value pair' do
+      @parser.stub!(:conversion_map).and_return([[1, 2], [3, 4], [4, 5]])
+      @parser.mapping.should == { 1 => 2, 3 => 4, 4 => 5}
+    end
   end
 end
 
