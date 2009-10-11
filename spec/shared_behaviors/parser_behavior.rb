@@ -593,5 +593,51 @@ shared "a parser" do
       @parser.record_to_array({ 'baz' => '1', 'bar' => '2', 'foo' => 'test'}).should == ['test', '2', '1']
     end
   end
+  
+  describe 'when converting a full row based upon rules' do
+    before do
+      @parser.stub!(:destinations).and_return([ 'foo', 'bar' ])
+      @parser.stub!(:mapping).and_return({ 'foo' => 'x', 'bar' => 'y' })
+    end
+    
+    it 'should accept a row' do
+      lambda { @parser.convert_row({}) }.should.not.raise(ArgumentError)
+    end
+    
+    it 'should require a row' do
+      lambda { @parser.convert_row }.should.raise(ArgumentError)
+    end
+    
+    it 'should fail if looking up destination attribute names fails' do
+      @parser.stub!(:destinations).and_raise(RuntimeError)
+      lambda { @parser.convert_row({}) }.should.raise(RuntimeError)
+    end
+    
+    it 'should fail if looking up the converter mapping fails' do
+      @parser.stub!(:mapping).and_raise(RuntimeError)
+      lambda { @parser.convert_row({}) }.should.raise(RuntimeError)
+    end
+    
+    it 'should fail if converting a field fails' do
+      @parser.stub!(:change).and_raise(RuntimeError)
+      lambda { @parser.convert_row({}) }.should.raise(RuntimeError)      
+    end
+    
+    it 'should return an empty record if there are no destinations' do
+      @parser.stub!(:destinations).and_return([])
+      @parser.convert_row({}).should == {}
+    end
+    
+    it 'should return a record with original destination-named field values mapped by converters' do
+      @parser.stub!(:destinations).and_return([ 'foo', 'bar', 'baz' ])
+      @parser.stub!(:mapping).and_return({
+        'foo' => 'x',
+        'bar' => 'y',
+        'baz' => Proc.new {|row| row.keys.size},
+      })
+      row = { 'x' => 'xyzzy', 'y' => 'frobnitz', 'lost' => 'field'}
+      @parser.convert_row(row).should == { 'foo' => 'xyzzy', 'bar' => 'frobnitz', 'baz' => 3}
+    end
+  end
 end
 
