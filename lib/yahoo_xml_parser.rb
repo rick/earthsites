@@ -7,7 +7,7 @@ class YahooXMLParser < Parser
   def conversion_map
     @conversion_map ||= 
       [
-        [ 'Name', 'name' ],
+        [ 'name', 'name' ],
         [ 'Discount', Proc.new {|source| "%0.2f" % (source['price'].to_f - source['sale-price'].to_f) } ]
       ]
   end
@@ -18,7 +18,14 @@ class YahooXMLParser < Parser
     STDERR.puts "Validating document..." if verbose?
     raise "document is not valid:\n  [#{document}]" unless valid?(parsed)
     STDERR.puts "Finished document validation." if verbose?
-    result = parsed.xpath('/Catalog/Item').inject([]) {|a,i| h= {}; a << h;  i.xpath('ItemField').each{|f| h[f['TableFieldID']] = f['Value'] }; a }
+    result = parsed.xpath('/Catalog/Item').inject([]) do |a,item| 
+      h = { 'id' => item['ID']}
+      a << h
+      item.xpath('ItemField').each do |f| 
+        h[f['TableFieldID']] = f['Value']
+      end
+      a 
+    end
     result
   end
   
