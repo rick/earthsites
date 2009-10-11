@@ -24,6 +24,7 @@ class YahooXMLParser < Parser
             'Friends of Tilonia' 
           end
         ],
+        [ 'seller_code', 'id' ],
         [ 'name',      'name'],
         [ 'short', 
           Proc.new do |row| 
@@ -47,7 +48,7 @@ class YahooXMLParser < Parser
         [ 'maker_code',  
           Proc.new do |row|
             if row['code'] =~ /^AV-/ or row['name'] =~ /avani/i
-              row['code'].sub(/^AV-/, '').sub(/^([a-zA-Z]+)(\d+[aA]?)$/, '\1-\2') 
+              row['code'].sub(/^(?:AV-)|(?:Avani)/, '').sub(/^([a-zA-Z]+)(\d+[aA]?)$/, '\1-\2') 
             else
               row['code']
             end    
