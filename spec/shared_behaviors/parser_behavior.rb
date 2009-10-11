@@ -518,5 +518,24 @@ shared "a parser" do
       @parser.destinations.should == [ 'foo', 'baz' ]
     end
   end
+
+  describe 'when changing a single row based upon a rule' do
+    it 'should accept a rule and a row' do
+      lambda { @parser.change('rule', 'row') }.should.not.raise(ArgumentError)
+    end
+    
+    it 'should require a rule and a row' do
+      lambda { @parser.change('rule') }.should.raise(ArgumentError)
+    end
+    
+    it 'should return the value of the named field from the row if the rule is a string' do
+      @parser.change('field', { 'foo' => 'bar', 'field' => 'day'}).should == 'day'
+    end
+    
+    it 'should return the result of calling the rule on the row if the rule is callable' do
+      rule = Proc.new {|row| row.keys.size }
+      @parser.change(rule, { 'a' => 'b', 'c' => 'd', 'e' => 'f'}).should == 3
+    end
+  end
 end
 
