@@ -65,6 +65,40 @@ describe 'process_yahoo_xml command' do
     end
   end
 
+  describe "when -u URL is specified on the command-line" do
+    before do
+      Object.send(:remove_const, :ARGV)
+      ARGV = ['-u', 'http://www.domain.com/']
+    end
+    
+    it 'should create a yahoo xml parser' do
+      YahooXMLParser.should.receive(:new).and_return(@parser)
+      run_command
+    end
+    
+    it "should set the url option to the value provided" do
+      YahooXMLParser.should.receive(:new).with(:url => 'http://www.domain.com/').and_return(@parser)      
+      run_command
+    end
+  end
+
+  describe "when --url URL is specified on the command-line" do
+    before do
+      Object.send(:remove_const, :ARGV)
+      ARGV = ['--url', 'http://www.domain.com/']
+    end
+    
+    it 'should create a yahoo xml parser' do
+      YahooXMLParser.should.receive(:new).and_return(@parser)
+      run_command
+    end
+    
+    it "should set the option to be verbose" do
+      YahooXMLParser.should.receive(:new).with(:url => 'http://www.domain.com/').and_return(@parser)      
+      run_command
+    end
+  end
+
   describe "when -h is specified on the command-line" do
     before do
       Object.send(:remove_const, :ARGV)
